@@ -1,0 +1,107 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,700;1,400;1,700&family=Poppins:ital,wght@0,300;0,400;0,700;1,300;1,400&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body,
+html {
+  font-family: 'Nunito', sans-serif;
+  min-height: 100%;
+  @apply text-primary-900 bg-gray-100;
+}
+h1,
+h2,
+h3,
+h4 {
+  font-family: 'Poppins', sans-serif;
+  break-inside: avoid;
+  display: block;
+}
+h1 {
+  @apply font-bold text-4xl text-primary;
+}
+h2 {
+  @apply text-3xl font-medium text-primary my-4;
+}
+
+h3 {
+  @apply text-xl text-primary font-medium my-2;
+}
+h4 {
+  @apply text-gray-700 font-bold my-2;
+}
+
+a {
+  @apply text-secondary-800 underline;
+}
+input[type='text'],
+input[type='password'],
+input[type='email'],
+input[type='number'],
+input[type='tel'],
+input[type='url'],
+input[type='search'],
+input[type='tel'],
+input[type='number'],
+input[type='range'],
+input[type='date'],
+input[type='month'],
+input[type='week'],
+input[type='time'],
+input[type='datetime'],
+input[type='datetime-local'] {
+  @apply border border-gray-300 rounded-lg p-2;
+}
+
+.button-link,
+button.primary,
+button.secondary {
+  @apply inline-flex select-none rounded-full justify-center px-4 py-2 text-sm font-medium;
+  @apply text-white dark:text-gray-100;
+  @apply border border-transparent;
+  @apply focus:outline-none focus-visible:ring;
+}
+
+.button-link {
+  @apply no-underline;
+}
+
+button.primary,
+.button-link.primary {
+  @apply bg-primary hover:bg-primary-800 dark:bg-primary dark:hover:bg-primary-600;
+}
+
+button.secondary,
+.button-link.secondary {
+  @apply bg-secondary hover:bg-secondary-800 dark:bg-secondary dark:hover:bg-secondary-600;
+}
+
+img#logo {
+  width: 257px;
+  height: 67px;
+}
+
+h1 {
+  @apply font-bold text-5xl;
+}
+
+table.soa-table {
+  @apply table-auto w-full text-left border-collapse my-4 text-sm text-gray-700 font-normal bg-white;
+}
+
+table.soa-table th {
+  @apply p-2;
+}
+table.soa-table td {
+  @apply border p-2 border-gray-200;
+}
+
+table.soa-table thead tr {
+  @apply border  rounded;
+}
+.company-form > div {
+  @apply grid;
+}
+.company-form > div div[role='alert'] {
+  @apply text-red-500 col-start-2;
+}

@@ -1,0 +1,165 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id @default(uuid()) @db.Uuid
+  email     String    @unique
+  name      String
+  company   Company?  @relation(fields: [companyId], references: [id])
+  companyId Uuid?     @map("company_id") @db.Uuid
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  password  Password?
+
+  @@map(name: "users")
+}
+
+model Password {
+  hash   String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String @unique @map(name: "user_id") @db.Uuid
+
+  @@map(name: "passwords")
+}
+
+model Company {
+  id                          String                        @id @default(uuid()) @db.Uuid
+  name                        String
+  addressLine1                String?                       @map(name: "address_line_1")
+  addressLine2                String?                       @map(name: "address_line_2")
+  city                        String
+  postcode                    String
+  country                     Country                       @relation(fields: [countryId], references: [id])
+  countryId                   Int                           @map(name: "country_id")
+  email                       String
+  vatNumber                   String                        @unique @map(name: "vat_number")
+  createdAt                   DateTime                      @default(now()) @map("created_at")
+  updatedAt                   DateTime                      @updatedAt @map("updated_at")
+  users                       User[]
+  controlImplementation       ControlImplementation[]
+  latestControlImplementation LatestControlImplementation[] @ignore
+
+  @@map(name: "companies")
+}
+
+// a model for ISO/IEC 27001 control
+model Control {
+  id                          String                        @id
+  title                       String
+  description                 String
+  annexSection                AnnexSection                  @relation(fields: [annexSectionId], references: [id])
+  annexSectionId              String                        @map(name: "annex_section_id")
+  controlImplementation       ControlImplementation[]
+  latestControlImplementation LatestControlImplementation[] @ignore
+  ControlLink                 ControlLink[]
+
+  @@map(name: "controls")
+}
+
+model Annex {
+  id          String         @id
+  title       String
+  description String
+  sections    AnnexSection[]
+
+  @@map(name: "annexes")
+}
+
+model AnnexSection {
+  id          String    @id
+  title       String
+  description String
+  controls    Control[]
+  annex       Annex     @relation(fields: [annexId], references: [id])
+  annexId     String    @map(name: "annex_id")
+
+  @@map(name: "annex_sections")
+}
+
+enum ControlApplicability {
+  Applicable
+  NotApplicable
+  Implemented
+}
+
+enum ControlJustification {
+  LR
+  CO
+  BP
+  RA
+}
+
+enum Continent {
+  Africa
+  Antarctica
+  Asia
+  Europe
+  NorthAmerica @map("North America")
+  Oceania
+  SouthAmerica @map("South America")
+}
+
+model Country {
+  id        Int       @id @default(autoincrement())
+  name      String
+  iso2      String
+  iso3      String?
+  localName String?   @map("local_name")
+  continent Continent?
+  Company   Company[]
+
+  @@map(name: "countries")
+}
+
+model LatestControlImplementation {
+  id            String                 @id @default(uuid()) @db.Uuid
+  control       Control                @relation(fields: [controlId], references: [id])
+  controlId     String                 @map(name: "control_id")
+  applicability ControlApplicability
+  justification ControlJustification[]
+  company       Company                @relation(fields: [companyId], references: [id])
+  companyId     String                 @map(name: "company_id") @db.Uuid
+  userId        String                 @map(name: "user_id") @db.Uuid
+  createdAt     DateTime               @default(now()) @map(name: "created_at")
+  updatedAt     DateTime               @updatedAt @map(name: "updated_at")
+
+  @@map(name: "latest_control_implementations")
+  @@ignore
+}
+
+model ControlImplementation {
+  id            String                 @id @default(uuid()) @db.Uuid
+  control       Control                @relation(fields: [controlId], references: [id])
+  controlId     String                 @map(name: "control_id")
+  applicability ControlApplicability
+  justification ControlJustification[]
+  company       Company                @relation(fields: [companyId], references: [id])
+  companyId     String                 @map(name: "company_id") @db.Uuid
+  userId        String                 @map(name: "user_id") @db.Uuid
+  createdAt     DateTime               @default(now()) @map(name: "created_at")
+  updatedAt     DateTime               @updatedAt @map(name: "updated_at")
+
+  @@unique([controlId, companyId])
+  @@map(name: "control_implementations")
+}
+
+model ControlLink {
+  id        String  @id @default(uuid()) @db.Uuid
+  control   Control @relation(fields: [controlId], references: [id])
+  controlId String  @map(name: "control_id")
+  companyId String  @map(name: "company_id") @db.Uuid
+  userId    String  @map(name: "user_id") @db.Uuid
+  name      String
+  url       String
+
+  @@map(name: "control_links")
+}

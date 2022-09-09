@@ -1,0 +1,17 @@
+version: "2"
+
+services:
+  postgres:
+    image: "postgres:10-alpine"
+    command: ["postgres", "-c", "log_statement=all", "-c", "log_destination=stderr"]
+    ports:
+      - "5432:5432"
+    volumes:
+     - ./DATA:/var/lib/postgresql/data
+     - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      POSTGRES_PASSWORD: postgres
+    logging:
+      options:
+        max-size: "1m"
+        max-file: "3"
